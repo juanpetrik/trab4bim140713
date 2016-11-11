@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -14,10 +16,16 @@ import javax.persistence.Table;
  *
  * @author Juan, 8 de nov de 2016
  *
- * Entidade Pessoa.
+ *         Entidade Pessoa.
  */
 @Entity
 @Table(name = "tb_pessoa")
+
+@NamedQueries({
+
+		@NamedQuery(name = "PessoaEntity.findAll", query = "SELECT p FROM PessoaEntity p")
+
+})
 public class PessoaEntity {
 
 	@Id
