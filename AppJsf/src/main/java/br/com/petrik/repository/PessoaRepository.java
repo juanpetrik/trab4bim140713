@@ -19,7 +19,8 @@ import br.petrik.uteis.Uteis;
  *
  * @author Juan, 8 de nov de 2016
  *
- *  Essa classe é responsável por realizar a gravação/alteração das informações na tabela de pessoas.
+ *         Essa classe é responsável por realizar a gravação/alteração das
+ *         informações na tabela de pessoas.
  *
  */
 public class PessoaRepository {
@@ -31,11 +32,12 @@ public class PessoaRepository {
 
 	/***
 	 * Método que é utilizado para salvar uma pessoa
+	 *
 	 * @param pessoaModel
 	 */
-	public void SalvarNovoRegistro(PessoaModel pessoaModel){
+	public void SalvarNovoRegistro(PessoaModel pessoaModel) {
 
-		entityManager =  Uteis.JpaEntityManager();
+		entityManager = Uteis.JpaEntityManager();
 
 		pessoaEntity = new PessoaEntity();
 		pessoaEntity.setDataCadastro(LocalDateTime.now());
@@ -45,7 +47,8 @@ public class PessoaRepository {
 		pessoaEntity.setOrigemCadastro(pessoaModel.getOrigemCadastro());
 		pessoaEntity.setSexo(pessoaModel.getSexo());
 
-		UsuarioEntity usuarioEntity = entityManager.find(UsuarioEntity.class, pessoaModel.getUsuarioModel().getCodigo());
+		UsuarioEntity usuarioEntity = entityManager.find(UsuarioEntity.class,
+				pessoaModel.getUsuarioModel().getCodigo());
 
 		pessoaEntity.setUsuarioEntity(usuarioEntity);
 
@@ -55,18 +58,20 @@ public class PessoaRepository {
 
 	/***
 	 * Método que é utilizado para pegar todas as pessoas do banco de dados..
-	 * @param no param
+	 *
+	 * @param no
+	 *            param
 	 */
-	public List<PessoaModel> GetPessoas(){
+	public List<PessoaModel> GetPessoas() {
 
 		List<PessoaModel> pessoasModel = new ArrayList<PessoaModel>();
 
-		entityManager =  Uteis.JpaEntityManager();
+		entityManager = Uteis.JpaEntityManager();
 
 		Query query = entityManager.createNamedQuery("PessoaEntity.findAll");
 
 		@SuppressWarnings("unchecked")
-		Collection<PessoaEntity> pessoasEntity = (Collection<PessoaEntity>)query.getResultList();
+		Collection<PessoaEntity> pessoasEntity = (Collection<PessoaEntity>) query.getResultList();
 
 		PessoaModel pessoaModel = null;
 
@@ -79,18 +84,17 @@ public class PessoaRepository {
 			pessoaModel.setEndereco(pessoaEntity.getEndereco());
 			pessoaModel.setNome(pessoaEntity.getNome());
 
-			if(pessoaEntity.getOrigemCadastro().equals("X"))
+			if (pessoaEntity.getOrigemCadastro().equals("X"))
 				pessoaModel.setOrigemCadastro("XML");
 			else
 				pessoaModel.setOrigemCadastro("INPUT");
 
-
-			if(pessoaEntity.getSexo().equals("M"))
+			if (pessoaEntity.getSexo().equals("M"))
 				pessoaModel.setSexo("Masculino");
 			else
 				pessoaModel.setSexo("Feminino");
 
-			UsuarioEntity usuarioEntity =  pessoaEntity.getUsuarioEntity();
+			UsuarioEntity usuarioEntity = pessoaEntity.getUsuarioEntity();
 
 			UsuarioModel usuarioModel = new UsuarioModel();
 			usuarioModel.setUsuario(usuarioEntity.getUsuario());
@@ -102,5 +106,32 @@ public class PessoaRepository {
 
 		return pessoasModel;
 
+	}
+
+	/***
+	 * Consultando uma pessoa...
+	 */
+	private PessoaEntity GetPessoa(int codigo) {
+
+		entityManager = Uteis.JpaEntityManager();
+
+		return entityManager.find(PessoaEntity.class, codigo);
+	}
+
+	/***
+	 * Método que altera uma pessoa no banco de dados...
+	 */
+	public void AlterarRegistro(PessoaModel pessoaModel) {
+
+		entityManager = Uteis.JpaEntityManager();
+
+		PessoaEntity pessoaEntity = this.GetPessoa(pessoaModel.getCodigo());
+
+		pessoaEntity.setEmail(pessoaModel.getEmail());
+		pessoaEntity.setEndereco(pessoaModel.getEndereco());
+		pessoaEntity.setNome(pessoaModel.getNome());
+		pessoaEntity.setSexo(pessoaModel.getSexo());
+
+		entityManager.merge(pessoaEntity);
 	}
 }
