@@ -3,6 +3,7 @@ package br.com.petrik.repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -145,5 +146,36 @@ public class PessoaRepository {
 		PessoaEntity pessoaEntity = this.GetPessoa(codigo);
 
 		entityManager.remove(pessoaEntity);
+	}
+
+	// Método que tras uma pessoa
+	public Hashtable<String, Integer> GetOrigemPessoa(){
+
+		Hashtable<String, Integer> hashtableRegistros = new Hashtable<String,Integer>();
+
+		entityManager =  Uteis.JpaEntityManager();
+
+		Query query = entityManager.createNamedQuery("PessoaEntity.GroupByOrigemCadastro");
+
+		@SuppressWarnings("unchecked")
+		Collection<Object[]> collectionRegistros  = (Collection<Object[]>)query.getResultList();
+
+		for (Object[] objects : collectionRegistros) {
+
+
+			String tipoPessoa 		= (String)objects[0];
+			int	   totalDeRegistros = ((Number)objects[1]).intValue();
+
+			if(tipoPessoa.equals("X"))
+				tipoPessoa = "XML";
+			else
+				tipoPessoa = "INPUT";
+
+			hashtableRegistros.put(tipoPessoa, totalDeRegistros);
+
+		}
+
+		return hashtableRegistros;
+
 	}
 }
